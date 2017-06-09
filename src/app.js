@@ -1,10 +1,15 @@
-const config = require("../config.json");
-
 import "./init.js";
 
-// import fuse from "fuse.js";
 import "./components/element.js";
+
+// import fuse from "fuse.js";
+
 import * as templateHelper from "./helpers/template.js";
+
+// TODO: fire off appropriate event when we get a menu command from the main thread
+require("electron").ipcRenderer.on("menuCommand", (event, message) => {
+  console.log(message);  // Prints 'whoooooooh!'
+});
 
 const template = templateHelper.create(`
   <style>

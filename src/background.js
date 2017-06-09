@@ -5,17 +5,71 @@
 
 import path from "path";
 import url from "url";
-import { app, Menu } from "electron";
+import { app, Menu, dialog } from "electron";
 import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
 import createWindow from "./helpers/window";
+
+const config = require("../config.json");
+const fs = require("fs");
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from "./env";
 
+let win = null;
+
+const mainMenu = {
+  label: "File",
+  submenu: [{
+    label: "Set Game Directory",
+    click: () => {
+      const filePath = dialog.showOpenDialog({defaultPath: config.gameDirectory, properties: ["openDirectory"]});
+      if (filePath.length) {
+        const file = JSON.stringify(Object.assign({}, config, {gameDirectory: filePath[0]}));
+        fs.writeFile("config.json", file, err => {
+          if (err) {
+            console.log(`File Write error: ${err}`);
+            dialog.showErrorBox("Failed to write file to disk.", err);
+          }
+        });
+      }
+    },
+  }, {
+    label: "Open",
+    accelerator: "CmdOrCtrl+O",
+    click: () => {
+      const filePath = dialog.showOpenDialog({defaultPath: config.gameDirectory, properties: ["openFile"]});
+      if (filePath.length) {
+        win.webContents.send("menuCommand", {command: "load", path: filePath[0]});
+      }
+    },
+  }, {
+    label: "Save",
+    accelerator: "CmdOrCtrl+S",
+    click: () => {
+      win.webContents.send("menuCommand", "save");
+    },
+  }, {
+    label: "Export",
+    accelerator: "CmdOrCtrl+E",
+    click: () => {
+      const filePath = dialog.showOpenDialog({defaultPath: config.gameDirectory, properties: ["openFile"]});
+      if (filePath.length) {
+        win.webContents.send("menuCommand", {command: "save", path: filePath[0]});
+      }
+    },
+  }, {
+    label: "Quit",
+    accelerator: "Alt+f4",
+    click: () => {
+      app.quit();
+    },
+  }],
+};
+
 const setApplicationMenu = () => {
-  const menus = [editMenuTemplate];
+  const menus = [mainMenu, editMenuTemplate];
   if (env.name !== "production") {
     menus.push(devMenuTemplate);
   }
@@ -33,19 +87,19 @@ if (env.name !== "production") {
 app.on("ready", () => {
   setApplicationMenu();
 
-  const mainWindow = createWindow("main", {
+  win = createWindow("main", {
     width: 1000,
     height: 600,
   });
 
-  mainWindow.loadURL(url.format({
+  win.loadURL(url.format({
     pathname: path.join(__dirname, "app.html"),
     protocol: "file:",
     slashes: true,
   }));
 
   if (env.name === "development") {
-    mainWindow.openDevTools();
+    win.openDevTools();
   }
 });
 
