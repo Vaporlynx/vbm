@@ -4,11 +4,24 @@ import "./components/element.js";
 
 // import fuse from "fuse.js";
 
+import {ipcRenderer} from "electron";
+
 import * as templateHelper from "./helpers/template.js";
 
+
+let currentMech = null;
+
 // TODO: fire off appropriate event when we get a menu command from the main thread
-require("electron").ipcRenderer.on("menuCommand", (event, message) => {
-  console.log(message);  // Prints 'whoooooooh!'
+ipcRenderer.on("menuCommand", (event, message) => {
+  if (message.command === "load") {
+    currentMech = JSON.parse(message.data);
+  }
+  else if (["save", "export"].includes(message.command)){
+    ipcRenderer.send("fsCommand", {command: message.command, data: currentMech});
+  }
+  else {
+    console.log(message);  // Prints 'whoooooooh!'
+  }
 });
 
 const template = templateHelper.create(`

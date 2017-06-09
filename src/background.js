@@ -1,10 +1,10 @@
 
 import path from "path";
 import url from "url";
-import { app, Menu, dialog } from "electron";
+import { app, Menu, dialog, ipcMain } from "electron";
 
 import settings from "electron-settings";
-// import fs from "fs";
+import fs from "fs";
 
 import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
@@ -15,6 +15,7 @@ import createWindow from "./helpers/window";
 import env from "./env";
 
 let win = null;
+let lastFilePath = "";
 
 const mainMenu = {
   label: "File",
@@ -24,13 +25,6 @@ const mainMenu = {
       const filePath = dialog.showOpenDialog({properties: ["openDirectory"]});
       if (filePath) {
         settings.set("gameDirectory", filePath[0]);
-        // const file = JSON.stringify(Object.assign({}, config, {gameDirectory: filePath[0]}));
-        // fs.writeFile("config.json", file, err => {
-        //   if (err) {
-        //     console.log(`File Write error: ${err}`);
-        //     dialog.showErrorBox("Failed to write file to disk.", err);
-        //   }
-        // });
       }
     },
   }, {
@@ -39,23 +33,29 @@ const mainMenu = {
     click: () => {
       const filePath = dialog.showOpenDialog({defaultPath: settings.get("gameDirectory"), properties: ["openFile"]});
       if (filePath) {
-        win.webContents.send("menuCommand", {command: "load", path: filePath[0]});
+        lastFilePath = filePath[0];
+        fs.readFile(lastFilePath, "utf8", (err, data) => {
+          if (err) {
+            console.log(`File Write error: ${err}`);
+            dialog.showErrorBox("Failed to write file to disk.", err);
+          }
+          else {
+            win.webContents.send("menuCommand", {command: "load", data});
+          }
+        });
       }
     },
   }, {
     label: "Save",
     accelerator: "CmdOrCtrl+S",
     click: () => {
-      win.webContents.send("menuCommand", "save");
+      win.webContents.send("menuCommand", {command: "save"});
     },
   }, {
     label: "Export",
     accelerator: "CmdOrCtrl+E",
     click: () => {
-      const filePath = dialog.showOpenDialog({defaultPath: settings.get("gameDirectory"), properties: ["openFile"]});
-      if (filePath) {
-        win.webContents.send("menuCommand", {command: "save", path: filePath[0]});
-      }
+      win.webContents.send("menuCommand", {command: "export"});
     },
   }, {
     label: "Quit",
@@ -65,6 +65,32 @@ const mainMenu = {
     },
   }],
 };
+
+// Handle fs command from the renderer
+ipcMain.on("fsCommand", (event, message) => {
+  if (message.command === "save") {
+//
+  }
+  else {
+    const fileName = message.data.Description.Id;
+    let file = null;
+    const filePath = dialog.showSaveDialog({defaultPath: `${settings.get("gameDirectory")}\\${fileName}.json`});
+    try {
+      file = JSON.stringify(message.data);
+      if (filePath) {
+        fs.writeFile(filePath, file, err => {
+          if (err) {
+            throw err;
+          }
+        });
+      }
+    }
+    catch (err) {
+      console.log(`File Write error: ${err}`);
+      dialog.showErrorBox("Failed to write file to disk.", err);
+    }
+  }
+});
 
 const setApplicationMenu = () => {
   const menus = [mainMenu, editMenuTemplate];
