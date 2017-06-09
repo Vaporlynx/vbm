@@ -10,8 +10,8 @@ import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
 import createWindow from "./helpers/window";
 
-const config = require("../config.json");
 const fs = require("fs");
+const settings = require("electron-settings");
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
@@ -24,23 +24,24 @@ const mainMenu = {
   submenu: [{
     label: "Set Game Directory",
     click: () => {
-      const filePath = dialog.showOpenDialog({defaultPath: config.gameDirectory, properties: ["openDirectory"]});
-      if (filePath.length) {
-        const file = JSON.stringify(Object.assign({}, config, {gameDirectory: filePath[0]}));
-        fs.writeFile("config.json", file, err => {
-          if (err) {
-            console.log(`File Write error: ${err}`);
-            dialog.showErrorBox("Failed to write file to disk.", err);
-          }
-        });
+      const filePath = dialog.showOpenDialog({properties: ["openDirectory"]});
+      if (filePath) {
+        settings.set("gameDirectory", filePath[0]);
+        // const file = JSON.stringify(Object.assign({}, config, {gameDirectory: filePath[0]}));
+        // fs.writeFile("config.json", file, err => {
+        //   if (err) {
+        //     console.log(`File Write error: ${err}`);
+        //     dialog.showErrorBox("Failed to write file to disk.", err);
+        //   }
+        // });
       }
     },
   }, {
     label: "Open",
     accelerator: "CmdOrCtrl+O",
     click: () => {
-      const filePath = dialog.showOpenDialog({defaultPath: config.gameDirectory, properties: ["openFile"]});
-      if (filePath.length) {
+      const filePath = dialog.showOpenDialog({defaultPath: settings.get("gameDirectory"), properties: ["openFile"]});
+      if (filePath) {
         win.webContents.send("menuCommand", {command: "load", path: filePath[0]});
       }
     },
@@ -54,8 +55,8 @@ const mainMenu = {
     label: "Export",
     accelerator: "CmdOrCtrl+E",
     click: () => {
-      const filePath = dialog.showOpenDialog({defaultPath: config.gameDirectory, properties: ["openFile"]});
-      if (filePath.length) {
+      const filePath = dialog.showOpenDialog({defaultPath: settings.get("gameDirectory"), properties: ["openFile"]});
+      if (filePath) {
         win.webContents.send("menuCommand", {command: "save", path: filePath[0]});
       }
     },
