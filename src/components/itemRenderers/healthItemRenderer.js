@@ -21,12 +21,16 @@ import * as templateHelper from "../../helpers/template.js";
       </vpl-label>
       <vpl-horizontal-divider>
       </vpl-horizontal-divider>
-      <vpl-label class="hidden" id="current" prefix="Current Armor:&nbsp">
+      <vpl-label id="currentLabel" prefix="Current Armor:&nbsp">
       </vpl-label>
-      <vpl-label class="hidden" id="currentRear" prefix="Current Rear Armor:&nbsp">
-      </vpl-label>
-      <vpl-label class="hidden" id="weight" prefix="Armor Weight:&nbsp">
-      </vpl-label>
+      <input id="current" type="number" step="1" max="100" min="0"></input>
+      <div id="rear" class="hidden">
+        <vpl-label id="currentRearLabel" prefix="Current Rear Armor:&nbsp">
+        </vpl-label>
+        <input id="currentRear" type="number" step="1" max="100" min="0"></input>
+        <vpl-label id="weight" prefix="Armor Weight:&nbsp">
+        </vpl-label>
+      </div>
     </div>
   `);
 
@@ -51,6 +55,8 @@ import * as templateHelper from "../../helpers/template.js";
 
       this.armorPerTon = 5 * 16;
 
+      this.rearElem = this.shadowRoot.getElementById("rear");
+
       this.weightElem = this.shadowRoot.getElementById("weight");
 
       for (const attribute of attributes) {
@@ -61,12 +67,27 @@ import * as templateHelper from "../../helpers/template.js";
             val = parseInt(val);
             if (this[attribute] !== val) {
               this[`_${attribute}`] = val;
+              const currentElem = this[`${attribute}Elem`];
               if (val !== -1) {
-                this[`${attribute}Elem`].classList.remove("hidden");
-                this[`${attribute}Elem`].text = val;
+                currentElem.classList.remove("hidden");
+                if (currentElem.value !== undefined) {
+                  if (attribute === "currentRear") {
+                    this.rearElem.classList.remove("hidden");
+                  }
+                  currentElem.addEventListener("change", event => {
+                    this.calculateArmorBounds();
+                  });
+                  currentElem.value = val;
+                }
+                else {
+                  currentElem.text = val;
+                }
               }
               else {
-                this[`${attribute}Elem`].classList.add("hidden");
+                currentElem.classList.add("hidden");
+                if (attribute === "currentRear") {
+                  this.rearElem.classList.add("hidden");
+                }
               }
               if (["current", "currentRear"].includes(attribute)) {
                 this.calculateWeight();
@@ -75,12 +96,30 @@ import * as templateHelper from "../../helpers/template.js";
           },
         });
       }
+
+      if (this.currentRear >= 0) {
+        this.rearElem.classList.remove("hidden");
+      }
+      else {
+        this.rearElem.classList.add("hidden");
+      }
     }
 
     calculateWeight() {
       const current = this.current !== -1 ? this.current : 0;
       const currentRear = this.currentRear !== -1 ? this.currentRear : 0;
       this.weightElem.text = ((current + currentRear) / this.armorPerTon).toFixed(2);
+    }
+
+    calculateArmorBounds() {
+      const frontMax = this.max - (this.currentRear !== -1 ? this.currentRear : 0);
+      const rearMax = this.max - this.current;
+      this.currentElem.value = this.current = Math.max(0, Math.min(frontMax, this.currentElem.value));
+      this.currentElem.max = frontMax;
+      if (this.currentRear > -1) {
+        this.currentRearElem.value = this.currentRear = Math.max(0, Math.min(rearMax, this.currentRearElem.value));
+        this.currentRearElem.max = rearMax;
+      }
     }
   });
 })();

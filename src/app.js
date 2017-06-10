@@ -37,5 +37,14 @@ customElements.define("vpl-app", class extends customElements.get("vpl-element")
     super();
 
     this.mechComponentElem = this.shadowRoot.getElementById("mechComponent");
+    this.mechComponentElem.component = {
+      DamageLevel: "Functional",
+      Location: "Head",
+      CurrentArmor: 35,
+      CurrentRearArmor: -1,
+      CurrentInternalStructure: 15,
+      AssignedArmor: 35,
+      AssignedRearArmor: -1,
+    };
   }
 });
