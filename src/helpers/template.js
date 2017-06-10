@@ -6,7 +6,8 @@ export const create = html => {
 
 export const clone = tag => {
   const clone = document.createElement("template");
-  clone.content.appendChild(document.importNode(customElements.get(tag).template.content, true));
+  const node = document.importNode(customElements.get(tag).template.content, true);
+  clone.content.appendChild(node);
   return clone;
 };
 

@@ -20,7 +20,7 @@ ipcRenderer.on("menuCommand", (event, message) => {
     ipcRenderer.send("fsCommand", {command: message.command, data: currentMech});
   }
   else {
-    console.log(message);  // Prints 'whoooooooh!'
+    console.log(message);
   }
 });
 
@@ -39,9 +39,5 @@ customElements.define("vpl-app", class extends customElements.get("vpl-element")
 
   constructor() {
     super();
-  }
-
-  initializedCallback() {
-    super.initializedCallback();
   }
 });

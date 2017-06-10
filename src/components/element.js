@@ -6,20 +6,8 @@
 
     constructor() {
       super();
-
-      this.initialized = false;
-
-      this.attachShadow({mode: "open"}).appendChild(document.importNode(this.constructor.template.content, true));
-    }
-
-    initializedCallback() {
-      this.initialized = true;
-    }
-
-    connectedCallback() {
-      if (!this.initialized) {
-        this.initializedCallback();
-      }
+      const node = document.importNode(this.constructor.template.content, true);
+      this.attachShadow({mode: "open"}).appendChild(node);
     }
   });
 })();
