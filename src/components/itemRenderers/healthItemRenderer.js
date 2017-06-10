@@ -9,6 +9,11 @@ import * as templateHelper from "../../helpers/template.js";
         flex-direction: column;
       }
 
+      .armorDiv {
+        display: flex;
+        flex-cirection: row;
+      }
+
       .hidden {
         display: none;
       }
@@ -21,10 +26,12 @@ import * as templateHelper from "../../helpers/template.js";
       </vpl-label>
       <vpl-horizontal-divider>
       </vpl-horizontal-divider>
-      <vpl-label id="currentLabel" prefix="Current Armor:&nbsp">
-      </vpl-label>
-      <input id="current" type="number" step="1" max="100" min="0"></input>
-      <div id="rear" class="hidden">
+      <div id="forward" class="armorDiv">
+        <vpl-label id="currentLabel" prefix="Current Armor:&nbsp">
+        </vpl-label>
+        <input id="current" type="number" step="1" max="100" min="0"></input>
+      </div>
+      <div id="rear" class="armorDiv" class="hidden">
         <vpl-label id="currentRearLabel" prefix="Current Rear Armor:&nbsp">
         </vpl-label>
         <input id="currentRear" type="number" step="1" max="100" min="0"></input>
