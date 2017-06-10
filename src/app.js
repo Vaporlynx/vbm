@@ -1,13 +1,8 @@
 import "./init.js";
 
-import "./components/element.js";
-
-// import fuse from "fuse.js";
-
 import {ipcRenderer} from "electron";
 
 import * as templateHelper from "./helpers/template.js";
-
 
 let currentMech = null;
 
@@ -27,8 +22,9 @@ ipcRenderer.on("menuCommand", (event, message) => {
 const template = templateHelper.create(`
   <style>
   </style>
-  <div style="display: flex;">
-    Hello.
+  <div id="body">
+    <vpl-mech-component id="mechComponent">
+    </vpl-mech-component>
   </div>
 `);
 
@@ -39,5 +35,7 @@ customElements.define("vpl-app", class extends customElements.get("vpl-element")
 
   constructor() {
     super();
+
+    this.mechComponentElem = this.shadowRoot.getElementById("mechComponent");
   }
 });

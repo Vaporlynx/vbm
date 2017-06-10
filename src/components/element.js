@@ -9,5 +9,11 @@
       const node = document.importNode(this.constructor.template.content, true);
       this.attachShadow({mode: "open"}).appendChild(node);
     }
+
+    attributeChangedCallback(name, oldVal, newVal) {
+      if (oldVal !== newVal) {
+        this[name] = newVal;
+      }
+    }
   });
 })();
