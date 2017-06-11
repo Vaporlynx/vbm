@@ -74,8 +74,9 @@ import * as templateHelper from "../../helpers/template.js";
 
       this.currentArmorElem = this.shadowRoot.getElementById("currentArmor");
       this.currentArmorElem.addEventListener("change", event => {
-        this.currentArmorElem.value = Math.min(Math.max(this.currentArmorElem.value, 0), this.armor.maxArmor);
-        this.dispatchEvent(new CustomEvent("attributeChanged", {detail: {property: "currentArmor", value: parseInt(this.currentArmorElem.value)}}));
+        this.armor.currentArmor = this.currentArmorElem.value = Math.min(Math.max(this.currentArmorElem.value, 0), this.armor.maxArmor);
+        this.calculateTotals();
+        this.dispatchEvent(new CustomEvent("attributeChanged", {detail: {property: "currentArmor", value: this.armor.currentArmor}}));
       });
 
       this.rearElem = this.shadowRoot.getElementById("rear");
@@ -84,8 +85,9 @@ import * as templateHelper from "../../helpers/template.js";
 
       this.currentRearArmorElem = this.shadowRoot.getElementById("currentRearArmor");
       this.currentRearArmorElem.addEventListener("change", event => {
-        this.currentRearArmorElem.value = Math.min(Math.max(this.currentRearArmorElem.value, 0), this.armor.maxRearArmor);
-        this.dispatchEvent(new CustomEvent("attributeChanged", {detail: {property: "currentRearArmor", value: parseInt(this.currentRearArmorElem.value)}}));
+        this.armor.currentRearArmor = this.currentRearArmorElem.value = Math.min(Math.max(this.currentRearArmorElem.value, 0), this.armor.maxRearArmor);
+        this.calculateTotals();
+        this.dispatchEvent(new CustomEvent("attributeChanged", {detail: {property: "currentRearArmor", value: this.armor.currentRearArmor}}));
       });
 
       this.totalArmorElem = this.shadowRoot.getElementById("totalArmor");
