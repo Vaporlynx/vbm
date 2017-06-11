@@ -1,6 +1,6 @@
 import "./init.js";
 
-import {ipcRenderer, dialog} from "electron";
+import {ipcRenderer} from "electron";
 
 import * as templateHelper from "./helpers/template.js";
 
@@ -32,7 +32,7 @@ for (const def of Object.keys(defs)) {
   ipcRenderer.send("fsCommand", {command: "getDefs", type: def});
 }
 
-// TODO: find out why JSON.parse() failes on the weapon template
+// TODO: find out why JSON.parse() fails to parse some weapons
 ipcRenderer.on("def", (event, message) => {
   for (const def of message.defs) {
     try {
