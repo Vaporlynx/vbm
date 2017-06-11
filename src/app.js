@@ -52,7 +52,6 @@ ipcRenderer.on("def", (event, message) => {
   }
 });
 
-
 const template = templateHelper.create(`
   <style>
   </style>

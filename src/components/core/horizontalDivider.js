@@ -1,4 +1,4 @@
-import * as templateHelper from "../helpers/template.js";
+import * as templateHelper from "../../helpers/template.js";
 
 (() => {
   const template = templateHelper.create(`

@@ -6,7 +6,7 @@ import * as templateHelper from "../helpers/template.js";
       :host {
         display: flex;
         flex-direction: column;
-        width: 200px;
+        width: 210px;
       }
 
       .hidden {
