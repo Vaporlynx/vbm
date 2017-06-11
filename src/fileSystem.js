@@ -34,6 +34,11 @@ export const getDefs = (defName, win) => {
     const subPath = (() => {
       switch (defName) {
         case "chassis": return "chassis";
+        case "amunition": return "ammunitionBox";
+        case "heatsinks": return "heatsinks";
+        case "jumpjets": return "jumpjets";
+        case "movement": return "movement";
+        case "weapon": return "weapon";
         default: return "";
       }
     })();
@@ -45,7 +50,7 @@ export const getDefs = (defName, win) => {
             reject(err);
           }
           else {
-            console.log(`Loading defs: ${data}`);
+            // console.log(`Loading defs: ${data}`);
             resolve(data);
           }
         });
@@ -54,7 +59,6 @@ export const getDefs = (defName, win) => {
       for (const filePath of directoryData.filter(i => i.includes(".json"))) {
         files.push(await new Promise((resolve, reject) => {
           fs.readFile(`${path}\\${filePath}`, "utf8", (err, data) => {
-            console.log("Read file");
             if (err) {
               reject(err);
             }

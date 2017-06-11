@@ -45,14 +45,14 @@ app.on("ready", () => {
     console.log(`fsCommand recieved: ${message.command}`);
     switch (message.command) {
       case "save": {
-        //
+        saveMech(message.data);
       } break;
       case "export": {
-//
+        exportMech(message.data);
       } break;
       case "getDefs": {
         getDefs(message.type).then(defs => {
-          console.log(`Sending defs to rendere process for ${message.type}`);
+          console.log(`Sending defs to render process for ${message.type}`);
           win.webContents.send("def", {type: message.type, defs});
         }).catch(err => {
           console.log(`Error getting defs: ${message.type}; ${err}`);

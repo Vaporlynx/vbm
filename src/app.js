@@ -19,19 +19,28 @@ ipcRenderer.on("menuCommand", (event, message) => {
   }
 });
 
-const defs = {chassis: []};
+const defs = {
+  chassis: [],
+  amunition: [],
+  heatsinks: [],
+  jumpjets: [],
+  movement: [],
+  weapon: [],
+};
 
 for (const def of Object.keys(defs)) {
   ipcRenderer.send("fsCommand", {command: "getDefs", type: def});
 }
 
+// TODO: find out why JSON.parse() failes on the weapon template
 ipcRenderer.on("def", (event, message) => {
-  try {
-    defs[message.type] = message.defs.map(def => JSON.parse(def));
-  }
-  catch (err) {
-    console.log(`Failed to parse def: ${err}`);
-    dialog.showErrorBox("Failed to parse defs", err);
+  for (const def of message.defs) {
+    try {
+        defs[message.type].push(JSON.parse(def));
+    }
+    catch (err) {
+      console.log(`Failed to parse def: ${err}`);
+    }
   }
 });
 
