@@ -3,7 +3,7 @@ import path from "path";
 import url from "url";
 import { app, Menu } from "electron";
 
-import "./fileSystem.js";
+import { fileSystemHandler } from "./fileSystem.js";
 
 import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
@@ -35,7 +35,7 @@ if (env.name !== "production") {
 app.on("ready", () => {
   setApplicationMenu();
 
-  mainMenu.win = win = createWindow("main", {
+  fileSystemHandler.win = mainMenu.win = win = createWindow("main", {
     width: 1000,
     height: 600,
   });
