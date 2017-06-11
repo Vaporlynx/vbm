@@ -8,6 +8,9 @@ import * as templateHelper from "../../helpers/template.js";
         display: flex;
         flex-direction: column;
       }
+      #healthDisplay > * {
+        margin-bottom: 3px;
+      }
 
       .armorDiv {
         display: flex;

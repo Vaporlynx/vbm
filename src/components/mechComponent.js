@@ -3,12 +3,18 @@ import * as templateHelper from "../helpers/template.js";
 (() => {
   const template = templateHelper.create(`
     <style>
+      :host {
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+      }
+
       .hidden {
         display: none;
       }
     </style>
 
-    <vpl-label id="name">
+    <vpl-label id="name" style="align-self: center;">
     </vpl-label>
     <vpl-health-item-renderer id="health">
     </vpl-health-item-renderer>

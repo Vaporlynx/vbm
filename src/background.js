@@ -1,13 +1,13 @@
 
 import path from "path";
 import url from "url";
-import { app, Menu, dialog, ipcMain } from "electron";
+import { app, Menu } from "electron";
 
-import settings from "electron-settings";
-import fs from "fs";
+import "./fileSystem.js";
 
 import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
+import { mainMenu } from "./menu/mainMenu.js";
 import createWindow from "./helpers/window";
 
 // Special module holding environment variables which you declared
@@ -15,82 +15,6 @@ import createWindow from "./helpers/window";
 import env from "./env";
 
 let win = null;
-let lastFilePath = "";
-
-const mainMenu = {
-  label: "File",
-  submenu: [{
-    label: "Set Game Directory",
-    click: () => {
-      const filePath = dialog.showOpenDialog({properties: ["openDirectory"]});
-      if (filePath) {
-        settings.set("gameDirectory", filePath[0]);
-      }
-    },
-  }, {
-    label: "Open",
-    accelerator: "CmdOrCtrl+O",
-    click: () => {
-      const filePath = dialog.showOpenDialog({defaultPath: settings.get("gameDirectory"), properties: ["openFile"]});
-      if (filePath) {
-        lastFilePath = filePath[0];
-        fs.readFile(lastFilePath, "utf8", (err, data) => {
-          if (err) {
-            console.log(`File Write error: ${err}`);
-            dialog.showErrorBox("Failed to write file to disk.", err);
-          }
-          else {
-            win.webContents.send("menuCommand", {command: "load", data});
-          }
-        });
-      }
-    },
-  }, {
-    label: "Save",
-    accelerator: "CmdOrCtrl+S",
-    click: () => {
-      win.webContents.send("menuCommand", {command: "save"});
-    },
-  }, {
-    label: "Export",
-    accelerator: "CmdOrCtrl+E",
-    click: () => {
-      win.webContents.send("menuCommand", {command: "export"});
-    },
-  }, {
-    label: "Quit",
-    accelerator: "Alt+f4",
-    click: () => {
-      app.quit();
-    },
-  }],
-};
-
-// Handle fs command from the renderer
-ipcMain.on("fsCommand", (event, message) => {
-  if (message.command === "save") {
-//
-  }
-  else {
-    const fileName = message.data.Description.Id;
-    let file = null;
-    const filePath = dialog.showSaveDialog({defaultPath: `${settings.get("gameDirectory")}\\${fileName}.json`});
-    try {
-      file = JSON.stringify(message.data);
-      if (filePath) {
-        fs.writeFile(filePath, file, err => {
-          if (err) {
-            throw err;
-          }
-        });
-      }
-    }
-    catch (err) {
-      console.log(`File Write error: ${err}`);
-      dialog.showErrorBox("Failed to write file to disk.", err);
-    }
-  }
-});
 
 const setApplicationMenu = () => {
   const menus = [mainMenu, editMenuTemplate];
@@ -111,7 +35,7 @@ if (env.name !== "production") {
 app.on("ready", () => {
   setApplicationMenu();
 
-  win = createWindow("main", {
+  mainMenu.win = win = createWindow("main", {
     width: 1000,
     height: 600,
   });
