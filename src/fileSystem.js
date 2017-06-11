@@ -35,10 +35,11 @@ export const getDefs = (defName, win) => {
       switch (defName) {
         case "chassis": return "chassis";
         case "amunition": return "ammunitionBox";
-        case "heatsinks": return "heatsinks";
-        case "jumpjets": return "jumpjets";
+        case "heatsink": return "heatsinks";
+        case "jumpjet": return "jumpjets";
         case "movement": return "movement";
         case "weapon": return "weapon";
+        case "mech": return "mech";
         default: return "";
       }
     })();

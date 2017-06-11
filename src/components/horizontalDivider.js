@@ -6,6 +6,7 @@ import * as templateHelper from "../helpers/template.js";
       :host {
         background-color: red;
         min-height: 2px;
+        display: flex;
       }
     </style>
   `);

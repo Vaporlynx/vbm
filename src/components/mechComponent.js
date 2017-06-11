@@ -31,10 +31,15 @@ import * as templateHelper from "../helpers/template.js";
       super();
 
       this._data = null;
+      this._def = null;
 
       this.nameElem = this.shadowRoot.getElementById("name");
 
       this.healthElem = this.shadowRoot.getElementById("health");
+    }
+
+    get component() {
+      return this._data;
     }
 
     set component(data) {
@@ -44,17 +49,26 @@ import * as templateHelper from "../helpers/template.js";
       }
     }
 
-    get component() {
-      return this._data;
+    get def() {
+      return this._def;
+    }
+
+    set def(val) {
+      this._def = val;
     }
 
     buildComponent() {
       this.nameElem.text = this.component.Location;
-      // TODO: pull max armor from the chassis def
-      this.healthElem.max = this.component.CurrentInternalStructure * (this.component.Location === "Head" ? 3 : 2);
-      this.healthElem.internal = this.component.CurrentInternalStructure;
-      this.healthElem.current = this.component.AssignedArmor;
-      this.healthElem.currentRear = this.component.AssignedRearArmor;
+      this.healthElem.armor = {
+        maxArmor: this.def.MaxArmor,
+        maxRearArmor: this.def.MaxRearArmor,
+        internal: this.def.InternalStructure,
+        currentArmor: this.component.AssignedArmor,
+        currentRearArmor: this.component.AssignedRearArmor,
+      };
+      this.healthElem.addEventListener("attributeChanged", event => {
+        this.component[event.detail.property === "currentArmor" ? "AssignedArmor" : "AssignedRearArmor"] = event.detail.value;
+      });
     }
   });
 })();

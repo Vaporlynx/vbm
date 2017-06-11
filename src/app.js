@@ -6,13 +6,19 @@ import * as templateHelper from "./helpers/template.js";
 
 let currentMech = null;
 
-// TODO: fire off appropriate event when we get a menu command from the main thread
+// TODO: find a more elegant way of letting the web app know we have a mech
+let loadMech = mech => {
+  console.log("getMechCallback Called before init!");
+};
+
 ipcRenderer.on("menuCommand", (event, message) => {
   if (message.command === "load") {
-    currentMech = JSON.parse(message.data);
+    loadMech(JSON.parse(message.data));
   }
   else if (["save", "export"].includes(message.command)){
-    ipcRenderer.send("fsCommand", {command: message.command, data: currentMech});
+    if (currentMech) {
+      ipcRenderer.send("fsCommand", {command: message.command, data: currentMech});
+    }
   }
   else {
     console.log(message);
@@ -20,26 +26,28 @@ ipcRenderer.on("menuCommand", (event, message) => {
 });
 
 const defs = {
-  chassis: [],
-  amunition: [],
-  heatsinks: [],
-  jumpjets: [],
-  movement: [],
-  weapon: [],
+  chassis: {},
+  amunition: {},
+  heatsink: {},
+  jumpjet: {},
+  movement: {},
+  weapon: {},
+  mech: {},
 };
 
 for (const def of Object.keys(defs)) {
   ipcRenderer.send("fsCommand", {command: "getDefs", type: def});
 }
 
-// TODO: find out why JSON.parse() fails to parse some weapons
+// TODO: find out why JSON.parse() fails to parse some defs
 ipcRenderer.on("def", (event, message) => {
   for (const def of message.defs) {
     try {
-        defs[message.type].push(JSON.parse(def));
+      const parsed = JSON.parse(def);
+      defs[message.type][parsed.Description.Id] = parsed;
     }
     catch (err) {
-      console.log(`Failed to parse def: ${err}`);
+      console.log(`Failed to parse def, type: ${message.type} def: ${def}`);
     }
   }
 });
@@ -49,8 +57,8 @@ const template = templateHelper.create(`
   <style>
   </style>
   <div id="body">
-    <vpl-mech-component id="mechComponent">
-    </vpl-mech-component>
+    <vpl-mech id="mech">
+    </vpl-mech>
   </div>
 `);
 
@@ -62,15 +70,11 @@ customElements.define("vpl-app", class extends customElements.get("vpl-element")
   constructor() {
     super();
 
-    this.mechComponentElem = this.shadowRoot.getElementById("mechComponent");
-    this.mechComponentElem.component = {
-      DamageLevel: "Functional",
-      Location: "Head",
-      CurrentArmor: 35,
-      CurrentRearArmor: -1,
-      CurrentInternalStructure: 15,
-      AssignedArmor: 35,
-      AssignedRearArmor: -1,
+    this.mechElem = this.shadowRoot.getElementById("mech");
+    this.mechElem.defs = defs;
+    loadMech = mech => {
+      currentMech = mech;
+      this.mechElem.buildMech(mech);
     };
   }
 });
