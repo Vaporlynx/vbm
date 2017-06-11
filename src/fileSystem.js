@@ -1,53 +1,73 @@
 
-import { dialog, ipcMain } from "electron";
+import { dialog} from "electron";
 
 import fs from "fs";
 import settings from "electron-settings";
 
-export const fileSystemHandler = (() => {
-  // Handle fs command from the renderer
-  ipcMain.on("fsCommand", async (event, message) => {
-    switch (message.command) {
-      case "save": {
-        //
-      } break;
-      case "export": {
-        const fileName = message.data.Description.Id;
-        let file = null;
-        const filePath = dialog.showSaveDialog({defaultPath: `${settings.get("gameDirectory")}\\${fileName}.json`});
-        try {
-          file = JSON.stringify(message.data);
-          if (filePath) {
-            fs.writeFile(filePath, file, err => {
-              if (err) {
-                throw err;
-              }
-            });
-          }
+export const saveMech = data => {
+  console.log("Save mech called");
+};
+
+export const exportMech = data => {
+  const fileName = data.Description.Id;
+  let file = null;
+  const filePath = dialog.showSaveDialog({defaultPath: `${settings.get("gameDirectory")}\\${fileName}.json`});
+  try {
+    file = JSON.stringify(data);
+    if (filePath) {
+      fs.writeFile(filePath, file, err => {
+        if (err) {
+          throw err;
         }
-        catch (err) {
-          console.log(`File Write error: ${err}`);
-          dialog.showErrorBox("Failed to write file to disk.", err);
-        }
-      } break;
-      case "getDefs": {
-        const subPath = () => {
-          switch (message.type) {
-            case "1": return "";
-            default: return "";
-          }
-        };
-        const path = `${settings.get("gameDirectory")}\\BattleTech_Data\\StreamingAssets\\data\\${subPath}`;
-        fs.readFile(path, "utf8", (err, data) => {
+      });
+    }
+  }
+  catch (err) {
+    console.log(`File Write error: ${err}`);
+    dialog.showErrorBox("Failed to write file to disk.", err);
+  }
+};
+
+export const getDefs = (defName, win) => {
+  return new Promise(async (resolve, reject) => {
+
+    const subPath = (() => {
+      switch (defName) {
+        case "chassis": return "chassis";
+        default: return "";
+      }
+    })();
+    const path = `${settings.get("gameDirectory")}\\BattleTech_Data\\StreamingAssets\\data\\${subPath}`;
+    try {
+      const directoryData = await new Promise((resolve, reject) => {
+        fs.readdir(path, "utf8", (err, data) => {
           if (err) {
-            console.log(`File Read error: ${err}`);
-            dialog.showErrorBox("Failed to read files from disk.", err);
+            reject(err);
           }
           else {
-            fileSystemHandler.webContents.send("def", {type: message.type, data});
+            console.log(`Loading defs: ${data}`);
+            resolve(data);
           }
         });
-      } break;
+      });
+      const files = [];
+      for (const filePath of directoryData.filter(i => i.includes(".json"))) {
+        files.push(await new Promise((resolve, reject) => {
+          fs.readFile(`${path}\\${filePath}`, "utf8", (err, data) => {
+            console.log("Read file");
+            if (err) {
+              reject(err);
+            }
+            else {
+              resolve(data);
+            }
+          });
+        }));
+      }
+      resolve(files);
+    }
+    catch (err) {
+      reject(err);
     }
   });
-});
+};

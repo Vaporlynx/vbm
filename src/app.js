@@ -1,6 +1,6 @@
 import "./init.js";
 
-import {ipcRenderer} from "electron";
+import {ipcRenderer, dialog} from "electron";
 
 import * as templateHelper from "./helpers/template.js";
 
@@ -18,6 +18,23 @@ ipcRenderer.on("menuCommand", (event, message) => {
     console.log(message);
   }
 });
+
+const defs = {chassis: []};
+
+for (const def of Object.keys(defs)) {
+  ipcRenderer.send("fsCommand", {command: "getDefs", type: def});
+}
+
+ipcRenderer.on("def", (event, message) => {
+  try {
+    defs[message.type] = message.defs.map(def => JSON.parse(def));
+  }
+  catch (err) {
+    console.log(`Failed to parse def: ${err}`);
+    dialog.showErrorBox("Failed to parse defs", err);
+  }
+});
+
 
 const template = templateHelper.create(`
   <style>

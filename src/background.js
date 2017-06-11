@@ -1,9 +1,9 @@
 
 import path from "path";
 import url from "url";
-import { app, Menu } from "electron";
+import { app, Menu, ipcMain } from "electron";
 
-import { fileSystemHandler } from "./fileSystem.js";
+import { getDefs, exportMech, saveMech } from "./fileSystem.js";
 
 import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
@@ -15,6 +15,7 @@ import createWindow from "./helpers/window";
 import env from "./env";
 
 let win = null;
+console.log("Main thread started");
 
 const setApplicationMenu = () => {
   const menus = [mainMenu, editMenuTemplate];
@@ -35,9 +36,29 @@ if (env.name !== "production") {
 app.on("ready", () => {
   setApplicationMenu();
 
-  fileSystemHandler.win = mainMenu.win = win = createWindow("main", {
+  mainMenu.win = win = createWindow("main", {
     width: 1000,
     height: 600,
+  });
+
+  ipcMain.on("fsCommand", async (event, message) => {
+    console.log(`fsCommand recieved: ${message.command}`);
+    switch (message.command) {
+      case "save": {
+        //
+      } break;
+      case "export": {
+//
+      } break;
+      case "getDefs": {
+        getDefs(message.type).then(defs => {
+          console.log(`Sending defs to rendere process for ${message.type}`);
+          win.webContents.send("def", {type: message.type, defs});
+        }).catch(err => {
+          console.log(`Error getting defs: ${message.type}; ${err}`);
+        });
+      } break;
+    }
   });
 
   win.loadURL(url.format({
