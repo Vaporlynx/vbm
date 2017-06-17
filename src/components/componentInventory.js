@@ -16,8 +16,8 @@ import * as templateHelper from "../helpers/template.js";
 
     <vpl-label text="Internal Components">
     </vpl-label>
-    <vp-table id="inventory">
-    </vp-table>
+    <vpl-table id="inventory">
+    </vpl-table>
   `);
 
   customElements.define("vpl-component-inventory", class extends customElements.get("vpl-element") {
@@ -42,7 +42,7 @@ import * as templateHelper from "../helpers/template.js";
 
       this.inventoryElem = this.shadowRoot.getElementById("inventory");
       this.inventoryElem.columns = [{
-        key: "Name",
+        key: "def.Description.Name",
       }];
     }
 

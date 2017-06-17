@@ -61,7 +61,7 @@ import * as templateHelper from "../../helpers/template.js";
     }
 
     set items(val) {
-      if (val !== null || !Array.isArray(val)) {
+      if (val !== null && !Array.isArray(val)) {
         throw new TypeError();
       }
       if (val !== this._items) {
@@ -80,15 +80,19 @@ import * as templateHelper from "../../helpers/template.js";
       this._displayItems = this.filter ? this.items.fiilter(this.filter) : this.items;
       if (this.displayItems && this.displayItems.length) {
         for (const item of this.displayItems) {
-          const row = document.createItem("tr");
+          const row = document.createElement("tr");
           row.rowData = item;
           for (const column of this.columns) {
             const cell = document.createElement("td");
+            let cellData = item;
+            for (const property of column.key.split(".")) {
+              cellData = cellData[property];
+            }
             if (column.renderer) {
-              cell.innerHTML = column.renderer(item[column.key]);
+              cell.innerHTML = column.renderer(cellData);
             }
             else {
-              cell.innerText = item[column.key];
+              cell.innerText = cellData;
             }
             row.appendChild(cell);
           }
