@@ -18,8 +18,8 @@ import * as templateHelper from "../helpers/template.js";
     </vpl-label>
     <vpl-health-item-renderer id="health">
     </vpl-health-item-renderer>
-    <div id="components">
-    </div>
+    <vpl-component-inventory id="components">
+    </vpl-component-inventory>
   `);
 
   customElements.define("vpl-mech-component", class extends customElements.get("vpl-element") {
@@ -31,11 +31,14 @@ import * as templateHelper from "../helpers/template.js";
       super();
 
       this._data = null;
-      this._def = null;
+      this._defs = null;
+      this._componentDef = null;
 
       this.nameElem = this.shadowRoot.getElementById("name");
 
       this.healthElem = this.shadowRoot.getElementById("health");
+
+      this.componentsElem = this.shadowRoot.getElementById("components");
     }
 
     get component() {
@@ -49,26 +52,35 @@ import * as templateHelper from "../helpers/template.js";
       }
     }
 
-    get def() {
-      return this._def;
+    get componentDef() {
+      return this._componentDef;
     }
 
-    set def(val) {
-      this._def = val;
+    set componentDef(val) {
+      this._componentDef = val;
+    }
+
+    get defs() {
+      return this._defs;
+    }
+
+    set defs(val) {
+      this._defs = val;
     }
 
     buildComponent() {
       this.nameElem.text = this.component.Location;
       this.healthElem.armor = {
-        maxArmor: this.def.MaxArmor,
-        maxRearArmor: this.def.MaxRearArmor,
-        internal: this.def.InternalStructure,
+        maxArmor: this.componentDef.MaxArmor,
+        maxRearArmor: this.componentDef.MaxRearArmor,
+        internal: this.componentDef.InternalStructure,
         currentArmor: this.component.AssignedArmor,
         currentRearArmor: this.component.AssignedRearArmor,
       };
       this.healthElem.addEventListener("attributeChanged", event => {
         this.component[event.detail.property === "currentArmor" ? "AssignedArmor" : "AssignedRearArmor"] = event.detail.value;
       });
+      this.componentsElem.inventory = this.component.inventory;
     }
   });
 })();

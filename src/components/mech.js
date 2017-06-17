@@ -63,7 +63,6 @@ import * as templateHelper from "../helpers/template.js";
 
       this.nameElem = this.shadowRoot.getElementById("name");
 
-
       this.headElem = this.shadowRoot.getElementById("head");
 
       this.leftArmElem = this.shadowRoot.getElementById("leftArm");
@@ -94,8 +93,13 @@ import * as templateHelper from "../helpers/template.js";
       console.log(`Building mech: ${mech.Description.Name}`);
       this.nameElem.text = mech.Description.Name;
       for (const location of mech.Locations) {
+        location.inventory = mech.inventory.filter(i => i.MountedLocation === location.Location).map(item => {
+          item.def = this.defs[item.ComponentDefType.toLowerCase()][item.ComponentDefID];
+          return item;
+        });
         const camelCaseName = `${location.Location.slice(0, 1).toLowerCase()}${location.Location.slice(1)}`;
-        this[`${camelCaseName}Elem`].def = this.defs.chassis[mech.ChassisID][location.Location];
+        this[`${camelCaseName}Elem`].componentDef = this.defs.chassis[mech.ChassisID][location.Location];
+        this[`${camelCaseName}Elem`].defs = this.defs;
         this[`${camelCaseName}Elem`].component = location;
       }
     }

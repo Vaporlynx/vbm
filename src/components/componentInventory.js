@@ -16,8 +16,8 @@ import * as templateHelper from "../helpers/template.js";
 
     <vpl-label text="Internal Components">
     </vpl-label>
-    <div id="inventory">
-    </div>
+    <vp-table id="inventory">
+    </vp-table>
   `);
 
   customElements.define("vpl-component-inventory", class extends customElements.get("vpl-element") {
@@ -29,7 +29,7 @@ import * as templateHelper from "../helpers/template.js";
       super();
 
       this._inventory = null;
-      this._def = null;
+      this._defs = null;
       this._componentTemplate = {
         ComponentDefID: "",
         ComponentDefType: "",
@@ -40,7 +40,10 @@ import * as templateHelper from "../helpers/template.js";
         hasPrefabName: false,
       };
 
-      // this.nameElem = this.shadowRoot.getElementById("name");
+      this.inventoryElem = this.shadowRoot.getElementById("inventory");
+      this.inventoryElem.columns = [{
+        key: "Name",
+      }];
     }
 
     get inventory() {
@@ -54,16 +57,16 @@ import * as templateHelper from "../helpers/template.js";
       }
     }
 
-    get def() {
-      return this._def;
+    get defs() {
+      return this._defs;
     }
 
-    set def(val) {
-      this._def = val;
+    set defs(val) {
+      this._defs = val;
     }
 
     buildInventoryList() {
-
+      this.inventoryElem.items = this.inventory;
     }
   });
 })();

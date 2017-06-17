@@ -16,7 +16,7 @@ import * as templateHelper from "../../helpers/template.js";
       </tbody>
     </table>
   `);
-
+// TODO: find out why this class is not initing properly
   customElements.define("vpl-table", class extends customElements.get("vpl-element") {
     static get template() {
       return template;
@@ -38,6 +38,7 @@ import * as templateHelper from "../../helpers/template.js";
     set columns(val) {
       if (this._columns !== val) {
         this._columns = val;
+        // TODO: build out column headers
       }
     }
 
@@ -47,22 +48,52 @@ import * as templateHelper from "../../helpers/template.js";
 
     set filter(val) {
       if (val !== this._filter) {
-        if (this._filter !== null && typeof this._filter !== "function") {
+        if (val !== null && typeof val !== "function") {
           throw new TypeError();
         }
         this._filter = val;
-        this.updateDisplayItems();
       }
-      this.buildBody();
+      this.buildTable();
     }
 
-    get items () {
+    get items() {
       return this._items;
     }
 
-    set items (val) {
+    set items(val) {
+      if (val !== null || !Array.isArray(val)) {
+        throw new TypeError();
+      }
       if (val !== this._items) {
         this._items = val;
+        this.buildTable();
+      }
+    }
+
+    get displayItems() {
+      return this._displayItems;
+    }
+
+    buildTable() {
+      const body = this.shadowRoot.querySelector("tbody");
+      body.innerHTML = "";
+      this._displayItems = this.filter ? this.items.fiilter(this.filter) : this.items;
+      if (this.displayItems && this.displayItems.length) {
+        for (const item of this.displayItems) {
+          const row = document.createItem("tr");
+          row.rowData = item;
+          for (const column of this.columns) {
+            const cell = document.createElement("td");
+            if (column.renderer) {
+              cell.innerHTML = column.renderer(item[column.key]);
+            }
+            else {
+              cell.innerText = item[column.key];
+            }
+            row.appendChild(cell);
+          }
+          body.appendChild(row);
+        }
       }
     }
   });

@@ -8,6 +8,7 @@ import "./components/core/table.js";
 
 import "./components/mechComponent.js";
 import "./components/mech.js";
+import "./components/componentInventory.js";
 
 import "./components/itemRenderers/healthItemRenderer.js";
 

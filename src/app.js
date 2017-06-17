@@ -27,7 +27,7 @@ ipcRenderer.on("menuCommand", (event, message) => {
 
 const defs = {
   chassis: {},
-  amunition: {},
+  ammunitionbox: {},
   heatsink: {},
   jumpjet: {},
   movement: {},

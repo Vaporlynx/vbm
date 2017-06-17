@@ -34,7 +34,7 @@ export const getDefs = (defName, win) => {
     const subPath = (() => {
       switch (defName) {
         case "chassis": return "chassis";
-        case "amunition": return "ammunitionBox";
+        case "ammunitionbox": return "ammunitionBox";
         case "heatsink": return "heatsinks";
         case "jumpjet": return "jumpjets";
         case "movement": return "movement";
