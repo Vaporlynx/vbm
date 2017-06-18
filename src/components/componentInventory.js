@@ -54,7 +54,6 @@ import * as templateHelper from "../helpers/template.js";
       this.inventoryElem.columns = [{
         key: "def.Description.Name",
         handleDragStart: (event, dragData) => {
-          // TODO: set the data type to the weapon hardpoint type so we can follow construction rules
           event.dataTransfer.effectAllowed = "copyMove";
           const type = dragData.def.Category || "Component";
           event.dataTransfer.setData(`json/${type}`, JSON.stringify(dragData));
@@ -64,6 +63,7 @@ import * as templateHelper from "../helpers/template.js";
           if (event.dataTransfer.dropEffect === "move") {
             this.inventory = this.inventory.filter((item, index) => index !== oldIndex);
           }
+          this.dispatchEvent(new CustomEvent("attributeChanged", {detail: {inventory: this.inventory}}));
         },
       }];
       this.inventoryElem.addEventListener("dragover", event => {
@@ -78,12 +78,14 @@ import * as templateHelper from "../helpers/template.js";
         }
       }, false);
       this.inventoryElem.addEventListener("drop", event => {
-        const item = event.dataTransfer.getData("json/Component") ||
+        const item = JSON.parse(event.dataTransfer.getData("json/Component") ||
           event.dataTransfer.getData("json/Energy") ||
           event.dataTransfer.getData("json/Missile") ||
           event.dataTransfer.getData("json/Ballistic") ||
-          event.dataTransfer.getData("json/AntiPersonell");
-        this.inventory = this.inventory.concat(JSON.parse(item));
+          event.dataTransfer.getData("json/AntiPersonell"));
+          item.MountedLocation = this.componentDef.Location;
+        this.inventory = this.inventory.concat(item);
+        this.dispatchEvent(new CustomEvent("attributeChanged", {detail: {inventory: this.inventory}}));
         event.stopPropagation();
       }, false);
       this.inventoryElem.addEventListener("dragend", event => {

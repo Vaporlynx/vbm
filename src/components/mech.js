@@ -22,6 +22,7 @@ import * as templateHelper from "../helpers/template.js";
       #recycle {
         align-self: flex-end;
         opacity: 0.6;
+        user-select: none;
       }
 
       .hidden {
@@ -53,7 +54,7 @@ import * as templateHelper from "../helpers/template.js";
       <vpl-mech-component id="rightLeg">
       </vpl-mech-component>
       <div id="recycle">
-        <img src="assets/barrel.svg" style="width: 100px;">
+        <img src="assets/barrel.svg" style="width: 100px; pointer-events: none;">
       </div>
     </div>
 
@@ -119,6 +120,8 @@ import * as templateHelper from "../helpers/template.js";
         this[`${camelCaseName}Elem`].componentDef = this.defs.chassis[mech.ChassisID][location.Location];
         this[`${camelCaseName}Elem`].defs = this.defs;
         this[`${camelCaseName}Elem`].component = location;
+        this[`${camelCaseName}Elem`].addEventListener("attributeChanged", event => {
+        });
       }
     }
   });

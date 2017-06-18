@@ -17,7 +17,16 @@ ipcRenderer.on("menuCommand", (event, message) => {
   }
   else if (["save", "export"].includes(message.command)){
     if (currentMech) {
-      ipcRenderer.send("fsCommand", {command: message.command, data: currentMech});
+      const mechCopy = JSON.parse(JSON.stringify(currentMech));
+      const inventory = [];
+      for (const location of mechCopy.Locations) {
+        if (location.inventory.length) {
+          inventory.push(...location.inventory.map(i => Object.assign(i, {def: undefined})));
+        }
+        location.inventory = undefined;
+      }
+      mechCopy.inventory = inventory;
+      ipcRenderer.send("fsCommand", {command: message.command, data: mechCopy});
     }
   }
   else {

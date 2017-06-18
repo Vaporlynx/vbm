@@ -95,6 +95,9 @@ import * as templateHelper from "../helpers/template.js";
       });
       this.componentsElem.componentDef = this.componentDef;
       this.componentsElem.inventory = this.component.inventory;
+      this.componentsElem.addEventListener("attributeChanged", event => {
+        this.component.inventory = event.detail.inventory;
+      });
     }
   });
 })();
