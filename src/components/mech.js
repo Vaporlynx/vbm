@@ -19,6 +19,11 @@ import * as templateHelper from "../helpers/template.js";
         margin-top: 3px;
       }
 
+      #recycle {
+        align-self: flex-end;
+        opacity: 0.6;
+      }
+
       .hidden {
         display: none;
       }
@@ -47,6 +52,9 @@ import * as templateHelper from "../helpers/template.js";
       </vpl-mech-component>
       <vpl-mech-component id="rightLeg">
       </vpl-mech-component>
+      <div id="recycle">
+        <img src="assets/barrel.svg" style="width: 100px;">
+      </div>
     </div>
 
   `);
@@ -79,6 +87,15 @@ import * as templateHelper from "../helpers/template.js";
       this.leftLegElem = this.shadowRoot.getElementById("leftLeg");
 
       this.rightLegElem = this.shadowRoot.getElementById("rightLeg");
+
+      this.recycleElem = this.shadowRoot.getElementById("recycle");
+      this.recycleElem.addEventListener("dragover", event => {
+        event.preventDefault();
+      }, false);
+      this.recycleElem.addEventListener("dragenter", event => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+      }, false);
     }
 
     get defs() {

@@ -136,6 +136,7 @@ import * as templateHelper from "../helpers/template.js";
         Ballistic: {max: 0, equipped: 0},
         AntiPersonell: {max: 0, equipped: 0},
       };
+      this.hardpointsElem.classList.remove("warning");
       if (this.componentDef.Hardpoints) {
         for (const hardpoint of this.componentDef.Hardpoints) {
           assignedHardpoints[hardpoint.WeaponMount].max ++;
@@ -143,6 +144,7 @@ import * as templateHelper from "../helpers/template.js";
       }
       for (const item of this.inventory) {
         if (item.def.Category) {
+          item.HardpointSlot = assignedHardpoints[item.def.Category].equipped;
           assignedHardpoints[item.def.Category].equipped ++;
         }
       }
@@ -151,9 +153,6 @@ import * as templateHelper from "../helpers/template.js";
         if (item.max || item.equipped) {
           if (item.equipped > item.max) {
             this.hardpointsElem.classList.add("warning");
-          }
-          else {
-            this.hardpointsElem.classList.remove("warning");
           }
           hardpoints.push(`${key}: ${item.equipped}/${item.max}`);
         }
