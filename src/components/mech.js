@@ -49,12 +49,14 @@ import * as templateHelper from "../helpers/template.js";
       </vpl-mech-component>
     </div>
     <div id="legsContainer" class=container>
+      <div id="legSpacer" style="width: 100px;">
+      </div>
       <vpl-mech-component id="leftLeg">
       </vpl-mech-component>
       <vpl-mech-component id="rightLeg">
       </vpl-mech-component>
-      <div id="recycle">
-        <img src="assets/barrel.svg" style="width: 100px; pointer-events: none;">
+      <div id="recycle" style="width: 100px;">
+        <img src="assets/barrel.svg" style="width: 100%; pointer-events: none;">
       </div>
     </div>
 
