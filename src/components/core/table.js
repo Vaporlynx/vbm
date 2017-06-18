@@ -92,6 +92,7 @@ import * as templateHelper from "../../helpers/template.js";
           row.rowData = item;
           for (const column of this.columns) {
             const cell = document.createElement("td");
+
             if (column.handleDragStart) {
               cell.setAttribute("draggable", true);
               cell.addEventListener("dragstart", event => {
@@ -100,26 +101,33 @@ import * as templateHelper from "../../helpers/template.js";
                 column.handleDragStart(event, dragData);
               }, false);
             }
+
             cell.addEventListener("dragend", event => {
               cell.style.opacity = "1.0";
               if (column.handleDragEnd) {
-                column.handleDragEnd(event);
+                column.handleDragEnd(event, this.items.indexOf(item));
               }
             }, false);
-            cell.addEventListener("dragover", event => {
-              event.stopPropagation();
-              if (column.handleDragOver) {
+
+            if (column.handleDragOver) {
+              cell.addEventListener("dragover", event => {
                 column.handleDragOver(event);
-              }
-            }, false);
-            cell.addEventListener("dragenter", event => {
-              event.stopPropagation();
-              if (column.handleDragEnter) {
+              }, false);
+            }
+
+            if (column.handleDragEnter) {
+              cell.addEventListener("dragenter", event => {
                 column.handleDragEnter(event);
-              }
-            }, false);
+              }, false);
+            }
+
+            if (column.handleDragLeave) {
+              cell.addEventListener("dragleave", event => {
+                column.handleDragLeave(event);
+              }, false);
+            }
+
             if (column.handleDrop) {
-              // TODO: figure out why the fuck this doesnt work
               cell.addEventListener("drop", event => {
                 column.handleDrop(event);
               }, false);

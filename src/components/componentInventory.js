@@ -40,23 +40,36 @@ import * as templateHelper from "../helpers/template.js";
         hasPrefabName: false,
       };
 
+      this.dragging = false;
+
       this.inventoryElem = this.shadowRoot.getElementById("inventory");
       this.inventoryElem.columns = [{
         key: "def.Description.Name",
         handleDragStart: (event, dragData) => {
           // TODO: set the data type to the weapon hardpoint type so we can follow construction rules
+          event.dataTransfer.effectAllowed = "copyMove";
           event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+          this.dragging = true;
         },
         handleDrop: event => {
+          this.inventory = this.inventory.concat(JSON.parse(event.dataTransfer.getData("text/plain")));
           event.stopPropagation();
-          this.inventory = this.inventory.concat(JSON.parse(event.dataTranser.getData("text/plain")));
         },
         handleDragEnter: event => {
-          console.log("Pick me!");
-          event.stopPropagation();
+          if (!this.dragging) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "move";
+          }
         },
         handleDragOver: event => {
-          event.dataTransfer.dropEffect = "move";
+          if (!this.dragging) {
+            event.preventDefault();
+          }
+        },
+        handleDragEnd: (event, oldIndex) => {
+          if (event.dataTransfer.dropEffect === "move") {
+            this.inventory = this.inventory.filter((item, index) => index !== oldIndex);
+          }
         },
       }];
     }
