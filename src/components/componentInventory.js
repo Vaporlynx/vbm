@@ -8,6 +8,10 @@ import * as templateHelper from "../helpers/template.js";
         flex-direction: column;
       }
 
+      .warning {
+        background: rgba(255,0,0,0.3);
+      }
+
       #inventory {
         background:rgba(255,255,255,0.2); /* fallback */
         background:
@@ -27,6 +31,8 @@ import * as templateHelper from "../helpers/template.js";
 
     <vpl-label text="Internal Components">
     </vpl-label>
+    <vpl-label id="hardpoints" text="">
+    </vpl-label>
     <vpl-table id="inventory">
     </vpl-table>
   `);
@@ -41,16 +47,7 @@ import * as templateHelper from "../helpers/template.js";
 
       this._inventory = null;
       this._defs = null;
-      this._componentTemplate = {
-        ComponentDefID: "",
-        ComponentDefType: "",
-        MountedLocation: "",
-        HardpointSlot: -1,
-        DamageLevel: "Functional",
-        prefabName: null,
-        hasPrefabName: false,
-      };
-
+      this._componentDef = null;
       this.dragging = false;
 
       this.inventoryElem = this.shadowRoot.getElementById("inventory");
@@ -59,24 +56,10 @@ import * as templateHelper from "../helpers/template.js";
         handleDragStart: (event, dragData) => {
           // TODO: set the data type to the weapon hardpoint type so we can follow construction rules
           event.dataTransfer.effectAllowed = "copyMove";
-          event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+          const type = dragData.def.Category || "Component";
+          event.dataTransfer.setData(`json/${type}`, JSON.stringify(dragData));
           this.dragging = true;
         },
-        // handleDrop: event => {
-        //   this.inventory = this.inventory.concat(JSON.parse(event.dataTransfer.getData("text/plain")));
-        //   event.stopPropagation();
-        // },
-        // handleDragEnter: event => {
-        //   if (!this.dragging) {
-        //     event.preventDefault();
-        //     event.dataTransfer.dropEffect = "move";
-        //   }
-        // },
-        // handleDragOver: event => {
-        //   if (!this.dragging) {
-        //     event.preventDefault();
-        //   }
-        // },
         handleDragEnd: (event, oldIndex) => {
           if (event.dataTransfer.dropEffect === "move") {
             this.inventory = this.inventory.filter((item, index) => index !== oldIndex);
@@ -84,21 +67,23 @@ import * as templateHelper from "../helpers/template.js";
         },
       }];
       this.inventoryElem.addEventListener("dragover", event => {
-        console.log("dragover");
         if (!this.dragging) {
           event.preventDefault();
         }
       }, false);
       this.inventoryElem.addEventListener("dragenter", event => {
-        console.log("dragenter");
         if (!this.dragging) {
           event.preventDefault();
           event.dataTransfer.dropEffect = "move";
         }
       }, false);
       this.inventoryElem.addEventListener("drop", event => {
-        console.log("drop");
-        this.inventory = this.inventory.concat(JSON.parse(event.dataTransfer.getData("text/plain")));
+        const item = event.dataTransfer.getData("json/Component") ||
+          event.dataTransfer.getData("json/Energy") ||
+          event.dataTransfer.getData("json/Missile") ||
+          event.dataTransfer.getData("json/Ballistic") ||
+          event.dataTransfer.getData("json/AntiPersonell");
+        this.inventory = this.inventory.concat(JSON.parse(item));
         event.stopPropagation();
       }, false);
       this.inventoryElem.addEventListener("dragend", event => {
@@ -106,6 +91,8 @@ import * as templateHelper from "../helpers/template.js";
           this.dragging = false;
         }
       }, false);
+
+      this.hardpointsElem = this.shadowRoot.getElementById("hardpoints");
     }
 
     get inventory() {
@@ -116,6 +103,7 @@ import * as templateHelper from "../helpers/template.js";
       if (this._inventory !== inventory) {
         this._inventory = inventory;
         this.buildInventoryList();
+        this.checkHardpoints();
       }
     }
 
@@ -127,8 +115,50 @@ import * as templateHelper from "../helpers/template.js";
       this._defs = val;
     }
 
+    get componentDef() {
+      return this._componentDef;
+    }
+
+    set componentDef(val) {
+      this._componentDef = val;
+    }
+
+
     buildInventoryList() {
       this.inventoryElem.items = this.inventory;
+    }
+
+    checkHardpoints() {
+      const hardpoints = [];
+      const assignedHardpoints = {
+        Energy: {max: 0, equipped: 0},
+        Missile: {max: 0, equipped: 0},
+        Ballistic: {max: 0, equipped: 0},
+        AntiPersonell: {max: 0, equipped: 0},
+      };
+      if (this.componentDef.Hardpoints) {
+        for (const hardpoint of this.componentDef.Hardpoints) {
+          assignedHardpoints[hardpoint.WeaponMount].max ++;
+        }
+      }
+      for (const item of this.inventory) {
+        if (item.def.Category) {
+          assignedHardpoints[item.def.Category].equipped ++;
+        }
+      }
+      for (const key of Object.keys(assignedHardpoints)) {
+        const item = assignedHardpoints[key];
+        if (item.max || item.equipped) {
+          if (item.equipped > item.max) {
+            this.hardpointsElem.classList.add("warning");
+          }
+          else {
+            this.hardpointsElem.classList.remove("warning");
+          }
+          hardpoints.push(`${key}: ${item.equipped}/${item.max}`);
+        }
+      }
+      this.hardpointsElem.text = `Hardpoints: ${hardpoints.join(" & ")}`;
     }
   });
 })();

@@ -93,6 +93,7 @@ import * as templateHelper from "../helpers/template.js";
       this.healthElem.addEventListener("attributeChanged", event => {
         this.component[event.detail.property === "currentArmor" ? "AssignedArmor" : "AssignedRearArmor"] = event.detail.value;
       });
+      this.componentsElem.componentDef = this.componentDef;
       this.componentsElem.inventory = this.component.inventory;
     }
   });
