@@ -6,7 +6,18 @@ import * as templateHelper from "../helpers/template.js";
       :host {
         display: flex;
         flex-direction: column;
-        width: 210px;
+        width: 180px;
+        background:rgba(0,0,0,0.8); /* fallback */
+        background:
+          linear-gradient(135deg, transparent 10px,rgba(0,0,0,0.8) 0) top left,
+          linear-gradient(225deg, transparent 10px,rgba(0,0,0,0.8) 0) top right,
+          linear-gradient(315deg, transparent 10px,rgba(0,0,0,0.8) 0) bottom right,
+          linear-gradient(45deg,  transparent 10px,rgba(0,0,0,0.8) 0) bottom left;
+        background-size: 50% 50%;
+        background-repeat: no-repeat;
+        padding: 10px;
+        padding-bottom: 11px;
+        user-select: none;
       }
 
       .hidden {
@@ -18,6 +29,8 @@ import * as templateHelper from "../helpers/template.js";
     </vpl-label>
     <vpl-health-item-renderer id="health">
     </vpl-health-item-renderer>
+    <vpl-horizontal-divider>
+    </vpl-horizontal-divider>
     <vpl-component-inventory id="components">
     </vpl-component-inventory>
   `);

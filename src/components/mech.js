@@ -16,6 +16,7 @@ import * as templateHelper from "../helpers/template.js";
 
       .container > * {
         margin-right: 3px;
+        margin-top: 3px;
       }
 
       .hidden {

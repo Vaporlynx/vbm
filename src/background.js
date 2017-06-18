@@ -39,6 +39,8 @@ app.on("ready", () => {
   mainMenu.win = win = createWindow("main", {
     width: 1000,
     height: 600,
+    useContentSize: true,
+    minWidth: 1200,
   });
 
   ipcMain.on("fsCommand", async (event, message) => {

@@ -74,6 +74,14 @@ import * as templateHelper from "../../helpers/template.js";
       return this._displayItems;
     }
 
+    indexInto(object, key) {
+      let data = object;
+      for (const property of key.split(".")) {
+        data = data[property];
+      }
+      return data;
+    }
+
     buildTable() {
       const body = this.shadowRoot.querySelector("tbody");
       body.innerHTML = "";
@@ -84,10 +92,39 @@ import * as templateHelper from "../../helpers/template.js";
           row.rowData = item;
           for (const column of this.columns) {
             const cell = document.createElement("td");
-            let cellData = item;
-            for (const property of column.key.split(".")) {
-              cellData = cellData[property];
+            if (column.handleDragStart) {
+              cell.setAttribute("draggable", true);
+              cell.addEventListener("dragstart", event => {
+                cell.style.opacity = "0.5";
+                const dragData = column.dragData ? this.indexInto(item, column.dragData) : item;
+                column.handleDragStart(event, dragData);
+              }, false);
             }
+            cell.addEventListener("dragend", event => {
+              cell.style.opacity = "1.0";
+              if (column.handleDragEnd) {
+                column.handleDragEnd(event);
+              }
+            }, false);
+            cell.addEventListener("dragover", event => {
+              event.stopPropagation();
+              if (column.handleDragOver) {
+                column.handleDragOver(event);
+              }
+            }, false);
+            cell.addEventListener("dragenter", event => {
+              event.stopPropagation();
+              if (column.handleDragEnter) {
+                column.handleDragEnter(event);
+              }
+            }, false);
+            if (column.handleDrop) {
+              // TODO: figure out why the fuck this doesnt work
+              cell.addEventListener("drop", event => {
+                column.handleDrop(event);
+              }, false);
+            }
+            const cellData = this.indexInto(item, column.key);
             if (column.renderer) {
               cell.innerHTML = column.renderer(cellData);
             }

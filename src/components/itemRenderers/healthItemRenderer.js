@@ -29,7 +29,7 @@ import * as templateHelper from "../../helpers/template.js";
       <vpl-label id="internal" prefix="Internal Structure:&nbsp">
       </vpl-label>
       <div id="forward" class="spacedRow">
-        <vpl-label id="currentLabel" prefix="Current Armor:&nbsp">
+        <vpl-label id="currentLabel" prefix="Armor:&nbsp">
         </vpl-label>
         <input id="currentArmor" type="number" step="1" max="100" min="0"></input>
       </div>
@@ -39,7 +39,7 @@ import * as templateHelper from "../../helpers/template.js";
         <vpl-label id="maxRearArmor" prefix="Max Rear Armor:&nbsp">
         </vpl-label>
         <div class="spacedRow">
-          <vpl-label id="currentRearLabel" prefix="Current Rear Armor:&nbsp">
+          <vpl-label id="currentRearLabel" prefix="Rear Armor:&nbsp">
           </vpl-label>
           <input id="currentRearArmor" type="number" step="1" max="100" min="0"></input>
           </vpl-label>

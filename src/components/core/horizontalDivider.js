@@ -4,7 +4,7 @@ import * as templateHelper from "../../helpers/template.js";
   const template = templateHelper.create(`
     <style>
       :host {
-        background-color: red;
+        background-color: #ffc107;
         min-height: 2px;
         display: flex;
       }

@@ -54,10 +54,40 @@ ipcRenderer.on("def", (event, message) => {
 
 const template = templateHelper.create(`
   <style>
+    :host {
+      background: #040d1b;
+      color: #e6e6e6;
+      display: flex;
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+    }
+
+    #bgContainer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: auto;
+      opacity: 0.4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    #body {
+      z-index: 1;
+      width: 100%;
+      overflow-x: hidden;
+    }
   </style>
   <div id="body">
     <vpl-mech id="mech">
     </vpl-mech>
+  </div>
+  <div id="bgContainer">
+    <img src="assets/bg3.svg" style="width: 720px;">
   </div>
 `);
 

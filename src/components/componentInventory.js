@@ -43,6 +43,21 @@ import * as templateHelper from "../helpers/template.js";
       this.inventoryElem = this.shadowRoot.getElementById("inventory");
       this.inventoryElem.columns = [{
         key: "def.Description.Name",
+        handleDragStart: (event, dragData) => {
+          // TODO: set the data type to the weapon hardpoint type so we can follow construction rules
+          event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+        },
+        handleDrop: event => {
+          event.stopPropagation();
+          this.inventory = this.inventory.concat(JSON.parse(event.dataTranser.getData("text/plain")));
+        },
+        handleDragEnter: event => {
+          console.log("Pick me!");
+          event.stopPropagation();
+        },
+        handleDragOver: event => {
+          event.dataTransfer.dropEffect = "move";
+        },
       }];
     }
 
