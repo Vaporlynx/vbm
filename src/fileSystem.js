@@ -30,11 +30,12 @@ export const exportMech = data => {
   if (settings.has("gameDirectory")) {
     const fileName = data.Description.Id;
     let file = null;
-    const filePath = dialog.showSaveDialog({defaultPath: `${settings.get("gameDirectory")}\\${fileName}.json`});
+    let filePath = dialog.showSaveDialog({defaultPath: `${settings.get("gameDirectory")}\\${fileName}.json`});
+    filePath = filePath.slice(0, filePath.lastIndexOf("\\"));
     try {
       file = JSON.stringify(data);
       if (filePath) {
-        fs.writeFile(filePath, file, err => {
+        fs.writeFile(`${filePath}\\${fileName}.json`, file, err => {
           if (err) {
             throw err;
           }

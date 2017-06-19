@@ -1,3 +1,4 @@
+// TODO: reorganize this, its getting hairy
 import "./init.js";
 
 import {ipcRenderer} from "electron";

@@ -116,7 +116,7 @@ import * as templateHelper from "../helpers/template.js";
     buildMech(mech) {
       this._mech = mech;
       console.log(`Building mech: ${mech.Description.Name}`);
-      this.nameElem.text = mech.Description.Id.replace("mechdef_", "");
+      this.nameElem.value = mech.Description.Id.replace("mechdef_", "");
       for (const location of mech.Locations) {
         location.inventory = mech.inventory.filter(i => i.MountedLocation === location.Location).map(item => {
           item.def = this.defs[item.ComponentDefType.toLowerCase()][item.ComponentDefID];
