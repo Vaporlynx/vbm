@@ -21,7 +21,6 @@ import * as templateHelper from "../helpers/template.js";
 
       #recycle {
         align-self: flex-end;
-        opacity: 0.6;
         user-select: none;
       }
 

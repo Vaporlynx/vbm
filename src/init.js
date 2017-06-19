@@ -1,5 +1,3 @@
-// import fuse from "fuse.js";
-
 // Register custom UI components
 import "./components/core/element.js";
 import "./components/core/label.js";

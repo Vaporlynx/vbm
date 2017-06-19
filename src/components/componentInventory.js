@@ -56,7 +56,7 @@ import * as templateHelper from "../helpers/template.js";
         handleDragStart: (event, dragData) => {
           event.dataTransfer.effectAllowed = "copyMove";
           const type = dragData.def.Category || "Component";
-          event.dataTransfer.setData(`json/${type}`, JSON.stringify(dragData));
+          event.dataTransfer.setData(`json/${type.toLowerCase()}`, JSON.stringify(dragData));
           this.dragging = true;
         },
         handleDragEnd: (event, oldIndex) => {
@@ -78,11 +78,11 @@ import * as templateHelper from "../helpers/template.js";
         }
       }, false);
       this.inventoryElem.addEventListener("drop", event => {
-        const item = JSON.parse(event.dataTransfer.getData("json/Component") ||
-          event.dataTransfer.getData("json/Energy") ||
-          event.dataTransfer.getData("json/Missile") ||
-          event.dataTransfer.getData("json/Ballistic") ||
-          event.dataTransfer.getData("json/AntiPersonell"));
+        const item = JSON.parse(event.dataTransfer.getData("json/component") ||
+          event.dataTransfer.getData("json/energy") ||
+          event.dataTransfer.getData("json/missile") ||
+          event.dataTransfer.getData("json/ballistic") ||
+          event.dataTransfer.getData("json/antipersonnel"));
           item.MountedLocation = this.componentDef.Location;
         this.inventory = this.inventory.concat(item);
         this.dispatchEvent(new CustomEvent("attributeChanged", {detail: {inventory: this.inventory}}));
@@ -136,7 +136,7 @@ import * as templateHelper from "../helpers/template.js";
         Energy: {max: 0, equipped: 0},
         Missile: {max: 0, equipped: 0},
         Ballistic: {max: 0, equipped: 0},
-        AntiPersonell: {max: 0, equipped: 0},
+        AntiPersonnel: {max: 0, equipped: 0},
       };
       this.hardpointsElem.classList.remove("warning");
       if (this.componentDef.Hardpoints) {
