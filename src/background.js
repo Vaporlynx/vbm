@@ -38,7 +38,7 @@ app.on("ready", () => {
   });
 
   if (settings.has("gameDirectory")) {
-    // TODO: find a better fix for this racec condition than delaying for a second
+    // TODO: find a better fix for this race condition than delaying for a second
     setTimeout(() => {
       console.log("Game directory set");
       win.webContents.send("gameDirectorySet", {});
