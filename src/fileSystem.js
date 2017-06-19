@@ -31,7 +31,7 @@ export const exportMech = data => {
     const fileName = data.Description.Id;
     let file = null;
     let filePath = dialog.showSaveDialog({defaultPath: `${settings.get("gameDirectory")}\\${fileName}.json`});
-    filePath = filePath.slice(0, filePath.lastIndexOf("\\"));
+    // filePath = filePath.slice(0, filePath.lastIndexOf("\\"));
     try {
       file = JSON.stringify(data);
       if (filePath) {

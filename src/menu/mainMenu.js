@@ -45,8 +45,8 @@ export const mainMenu = {
       mainMenu.win.webContents.send("menuCommand", {command: "save"});
     },
   }, {
-    label: "Save As",
-    accelerator: "CmdOrCtrl+Shift+S",
+    label: "Export",
+    accelerator: "CmdOrCtrl+E",
     click: () => {
       mainMenu.win.webContents.send("menuCommand", {command: "export"});
     },
