@@ -35,6 +35,9 @@ ipcRenderer.on("menuCommand", (event, message) => {
         location.inventory = undefined;
       }
       mechCopy.inventory = inventory;
+      if (!mechCopy.MechTags.items.includes("unit_release_ksbeta")) {
+        mechCopy.MechTags.items.push("unit_release_ksbeta");
+      }
       ipcRenderer.send("fsCommand", {command: message.command, data: mechCopy});
     }
   }

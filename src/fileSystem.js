@@ -17,6 +17,16 @@ export const saveMech = data => {
             throw err;
           }
         });
+        // TODO: This will clutter up the VersionManifest, but I dont want to read all 3000 lines to figure out if we need to add this.
+        fs.appendFile(
+          `${settings.get("gameDirectory")}\\BattleTech_Data\\StreamingAssets\\data\\VersionManifest.csv`,
+          `${fileName},MechDef,data/mech/${fileName}.json,0,2017-06-01T15:36:00.0000000Z,2017-06-01T15:36:00.0000000Z,,,0\n`,
+          err => {
+            if (err) {
+              throw err;
+            }
+          }
+        );
       }
     }
     catch (err) {
@@ -30,7 +40,7 @@ export const exportMech = data => {
   if (settings.has("gameDirectory")) {
     const fileName = data.Description.Id;
     let file = null;
-    let filePath = dialog.showSaveDialog({defaultPath: `${settings.get("gameDirectory")}\\${fileName}.json`});
+    const filePath = dialog.showSaveDialog({defaultPath: `${settings.get("gameDirectory")}\\${fileName}.json`});
     // filePath = filePath.slice(0, filePath.lastIndexOf("\\"));
     try {
       file = JSON.stringify(data);
