@@ -2,8 +2,9 @@ import "./init.js";
 
 import {ipcRenderer} from "electron";
 
-import * as templateHelper from "./helpers/template.js";
 import Fuse from "fuse.js";
+
+import * as templateHelper from "./helpers/template.js";
 
 let currentMech = null;
 
@@ -55,9 +56,12 @@ let inventoryItems = null;
 
 const itemDefs = ["ammunitionbox", "heatsink", "jumpjet", "weapon"];
 
-for (const def of Object.keys(defs)) {
-  ipcRenderer.send("fsCommand", {command: "getDefs", type: def});
-}
+
+ipcRenderer.on("gameDirectorySet", (event, message) => {
+  for (const def of Object.keys(defs)) {
+    ipcRenderer.send("fsCommand", {command: "getDefs", type: def});
+  }
+});
 
 // TODO: find out why JSON.parse() fails to parse some defs
 ipcRenderer.on("def", (event, message) => {

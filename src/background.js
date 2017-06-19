@@ -3,6 +3,8 @@ import path from "path";
 import url from "url";
 import { app, Menu, ipcMain } from "electron";
 
+import settings from "electron-settings";
+
 import { getDefs, exportMech, saveMech } from "./fileSystem.js";
 
 import { devMenuTemplate } from "./menu/dev_menu_template";
@@ -25,14 +27,6 @@ const setApplicationMenu = () => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(menus));
 };
 
-// Save userData in separate folders for each environment.
-// Thanks to this you can use production and development versions of the app
-// on same machine like those are two separate apps.
-if (env.name !== "production") {
-  const userDataPath = app.getPath("userData");
-  app.setPath("userData", `${userDataPath} (${env.name})`);
-}
-
 app.on("ready", () => {
   setApplicationMenu();
 
@@ -42,6 +36,17 @@ app.on("ready", () => {
     useContentSize: true,
     minWidth: 1200,
   });
+
+  if (settings.has("gameDirectory")) {
+    // TODO: find a better fix for this racec condition than delaying for a second
+    setTimeout(() => {
+      console.log("Game directory set");
+      win.webContents.send("gameDirectorySet", {});
+    }, 1000);
+  }
+  else {
+    console.log("Game directory is not set.");
+  }
 
   ipcMain.on("fsCommand", async (event, message) => {
     console.log(`fsCommand recieved: ${message.command}`);

@@ -14,25 +14,28 @@ export const mainMenu = {
       const filePath = dialog.showOpenDialog({properties: ["openDirectory"]});
       if (filePath) {
         settings.set("gameDirectory", filePath[0]);
+        mainMenu.win.webContents.send("gameDirectorySet", {});
       }
     },
   }, {
     label: "Open",
     accelerator: "CmdOrCtrl+O",
     click: () => {
-      const startPath = `${settings.get("gameDirectory")}\\BattleTech_Data\\StreamingAssets\\data\\mech`;
-      const filePath = dialog.showOpenDialog({defaultPath: startPath, properties: ["openFile"]});
-      if (filePath) {
-        lastFilePath = filePath[0];
-        fs.readFile(lastFilePath, "utf8", (err, data) => {
-          if (err) {
-            console.log(`File Write error: ${err}`);
-            dialog.showErrorBox("Failed to write file to disk.", err);
-          }
-          else {
-            mainMenu.win.webContents.send("menuCommand", {command: "load", data});
-          }
-        });
+      if (settings.has("gameDirectory")) {
+        const startPath = `${settings.get("gameDirectory")}\\BattleTech_Data\\StreamingAssets\\data\\mech`;
+        const filePath = dialog.showOpenDialog({defaultPath: startPath, properties: ["openFile"]});
+        if (filePath) {
+          lastFilePath = filePath[0];
+          fs.readFile(lastFilePath, "utf8", (err, data) => {
+            if (err) {
+              console.log(`File Write error: ${err}`);
+              dialog.showErrorBox("Failed to write file to disk.", err);
+            }
+            else {
+              mainMenu.win.webContents.send("menuCommand", {command: "load", data});
+            }
+          });
+        }
       }
     },
   }, {
@@ -42,8 +45,8 @@ export const mainMenu = {
       mainMenu.win.webContents.send("menuCommand", {command: "save"});
     },
   }, {
-    label: "Export",
-    accelerator: "CmdOrCtrl+E",
+    label: "Save As",
+    accelerator: "CmdOrCtrl+Shift+S",
     click: () => {
       mainMenu.win.webContents.send("menuCommand", {command: "export"});
     },

@@ -29,8 +29,8 @@ import * as templateHelper from "../helpers/template.js";
       }
     </style>
 
-    <vpl-label id="name" style="align-self: center;">
-    </vpl-label>
+    <input id="name" style="align-self: center;">
+    </input>
     <div id="headContainer" style="display: flex; flex-direction: column;">
       <vpl-mech-component id="head" style="align-self: center;">
       </vpl-mech-component>
@@ -69,10 +69,14 @@ import * as templateHelper from "../helpers/template.js";
     constructor() {
       super();
 
-      this._data = null;
       this._defs = null;
+      this._mech = null;
 
       this.nameElem = this.shadowRoot.getElementById("name");
+      this.nameElem.addEventListener("keyup", event => {
+        this._mech.Description.Id = `mechdef_${this.nameElem.value.trim()}`;
+      });
+
 
       this.headElem = this.shadowRoot.getElementById("head");
 
@@ -110,8 +114,9 @@ import * as templateHelper from "../helpers/template.js";
     }
 
     buildMech(mech) {
+      this._mech = mech;
       console.log(`Building mech: ${mech.Description.Name}`);
-      this.nameElem.text = mech.Description.Name;
+      this.nameElem.text = mech.Description.Id.replace("mechdef_", "");
       for (const location of mech.Locations) {
         location.inventory = mech.inventory.filter(i => i.MountedLocation === location.Location).map(item => {
           item.def = this.defs[item.ComponentDefType.toLowerCase()][item.ComponentDefID];
