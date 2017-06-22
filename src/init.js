@@ -10,4 +10,4 @@ import "./components/componentInventory.js";
 
 import "./components/itemRenderers/healthItemRenderer.js";
 
-console.log("Init complete");
+console.log("Web client init complete");

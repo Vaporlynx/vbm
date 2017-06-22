@@ -31,14 +31,14 @@ app.on("ready", () => {
   setApplicationMenu();
 
   mainMenu.win = win = createWindow("main", {
-    width: 1000,
+    width: 1200,
     height: 600,
     useContentSize: true,
     minWidth: 1200,
   });
 
   if (settings.has("gameDirectory")) {
-    // TODO: find a better fix for this race condition than delaying for a second
+    // TODO: race condition, change this to use a promise instead of waiting for a second
     setTimeout(() => {
       console.log("Game directory set");
       win.webContents.send("gameDirectorySet", {});

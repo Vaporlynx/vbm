@@ -1,3 +1,5 @@
+// TODO: decide if this is useful, left over stuff from boilerplate
+
 // Simple wrapper exposing environment variables to rest of the code.
 
 import jetpack from "fs-jetpack";

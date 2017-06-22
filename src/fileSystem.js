@@ -17,7 +17,7 @@ export const saveMech = data => {
             throw err;
           }
         });
-        // TODO: This will clutter up the VersionManifest, but I dont want to read all 3000 lines to figure out if we need to add this.
+        // TODO: This will clutter up the VersionManifest, but I dont want to read all 3000+ lines to figure out if we need to add this.
         fs.appendFile(
           `${settings.get("gameDirectory")}\\BattleTech_Data\\StreamingAssets\\data\\VersionManifest.csv`,
           `${fileName},MechDef,data/mech/${fileName}.json,0,2017-06-01T15:36:00.0000000Z,2017-06-01T15:36:00.0000000Z,,,0\n`,

@@ -1,3 +1,4 @@
+// TODO: maybe look at using a functional style for item renderers, data in html out
 import * as templateHelper from "../../helpers/template.js";
 
 (() => {

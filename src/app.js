@@ -1,4 +1,3 @@
-// TODO: reorganize this, its getting hairy
 import "./init.js";
 
 import {ipcRenderer} from "electron";
@@ -28,6 +27,8 @@ ipcRenderer.on("menuCommand", (event, message) => {
     if (currentMech) {
       const mechCopy = JSON.parse(JSON.stringify(currentMech));
       const inventory = [];
+      // TODO: pull in a validation and normalization module so we can specify
+      // what should be written to the json, instead of what we should strip out
       for (const location of mechCopy.Locations) {
         if (location.inventory.length) {
           inventory.push(...location.inventory.map(i => Object.assign(i, {def: undefined})));
@@ -46,6 +47,8 @@ ipcRenderer.on("menuCommand", (event, message) => {
   }
 });
 
+// TODO: figure out some solution for the casing issue.
+// The JSON defs have inconsistant casing for property names and it drives me up the wall
 const defs = {
   chassis: {},
   ammunitionbox: {},
@@ -67,7 +70,6 @@ ipcRenderer.on("gameDirectorySet", (event, message) => {
   }
 });
 
-// TODO: find out why JSON.parse() fails to parse some defs
 ipcRenderer.on("def", (event, message) => {
   for (const def of message.defs) {
     try {
@@ -77,12 +79,16 @@ ipcRenderer.on("def", (event, message) => {
         defsLoaded();
       }
     }
+    // The JSON defs have many typos and missing commas, several files fail to parse
     catch (err) {
       console.log(`Failed to parse def, type: ${message.type} def: ${def}`);
     }
   }
 });
 
+
+// TODO: split this  class, the above stuff has to do with loading and
+// saving data, the below stuff is ui
 const template = templateHelper.create(`
   <style>
     :host {
