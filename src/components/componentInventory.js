@@ -83,9 +83,7 @@ import * as templateHelper from "../helpers/template.js";
           event.dataTransfer.getData("json/missile") ||
           event.dataTransfer.getData("json/ballistic") ||
           event.dataTransfer.getData("json/antipersonnel"));
-          item.MountedLocation = this.componentDef.Location;
-        this.inventory = this.inventory.concat(item);
-        this.dispatchEvent(new CustomEvent("attributeChanged", {detail: {inventory: this.inventory}}));
+        this.addComponent(item);
         event.stopPropagation();
       }, false);
       this.inventoryElem.addEventListener("dragend", event => {
@@ -160,6 +158,12 @@ import * as templateHelper from "../helpers/template.js";
         }
       }
       this.hardpointsElem.text = `Hardpoints: ${hardpoints.join(" & ")}`;
+    }
+
+    addComponent(component) {
+      component.MountedLocation = this.componentDef.Location;
+      this.inventory = this.inventory.concat(component);
+      this.dispatchEvent(new CustomEvent("attributeChanged", {detail: {inventory: this.inventory}}));
     }
   });
 })();

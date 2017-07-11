@@ -47,7 +47,7 @@ ipcRenderer.on("menuCommand", (event, message) => {
   }
 });
 
-// TODO: figure out some solution for the casing issue.
+// TODO: figure out some solution for the casing issue throughout the app
 // The JSON defs have inconsistant casing for property names and it drives me up the wall
 const defs = {
   chassis: {},
@@ -115,6 +115,7 @@ const template = templateHelper.create(`
       justify-content: center;
       align-items: center;
       pointer-events: none;
+      user-select: none;
     }
 
     #equipmentList {
@@ -193,6 +194,13 @@ customElements.define("vpl-app", class extends customElements.get("vpl-element")
         event.dataTransfer.setData(`json/${type.toLowerCase()}`, JSON.stringify(dragData));
       },
     }];
+    this.inventoryElem.addEventListener("dragover", event => {
+      event.preventDefault();
+    }, false);
+    this.inventoryElem.addEventListener("dragenter", event => {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+    }, false);
 
 
     this.equipmentFilterElem = this.shadowRoot.getElementById("equipmentFilter");

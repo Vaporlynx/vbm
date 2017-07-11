@@ -52,6 +52,27 @@ import * as templateHelper from "../helpers/template.js";
       this.healthElem = this.shadowRoot.getElementById("health");
 
       this.componentsElem = this.shadowRoot.getElementById("components");
+
+      this.addEventListener("dragover", event => {
+        if (!this.componentsElem.dragging) {
+          event.preventDefault();
+        }
+      }, false);
+      this.addEventListener("dragenter", event => {
+        if (!this.componentsElem.dragging) {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = "move";
+        }
+      }, false);
+      this.addEventListener("drop", event => {
+        const item = JSON.parse(event.dataTransfer.getData("json/component") ||
+          event.dataTransfer.getData("json/energy") ||
+          event.dataTransfer.getData("json/missile") ||
+          event.dataTransfer.getData("json/ballistic") ||
+          event.dataTransfer.getData("json/antipersonnel"));
+        this.componentsElem.addComponent(item);
+        event.stopPropagation();
+      }, false);
     }
 
     get component() {
