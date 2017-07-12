@@ -7,6 +7,14 @@ import * as templateHelper from "../../helpers/template.js";
         display: flex;
         flex-direction: column;
       }
+
+      table {
+        width: 100%;
+      }
+      
+      td:hover {
+        background-color: rgba(48, 111, 189, 0.42);
+      }
     </style>
 
     <table>
